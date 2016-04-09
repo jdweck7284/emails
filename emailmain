@@ -1,0 +1,31 @@
+import smtplib
+
+import json
+from pprint import pprint
+
+with open('employees.json') as data_file:    
+    data = json.load(data_file) #load data from the employees.json file
+    sendname = data["to"][1] #access the employees dictionary and the first item in that list
+    recipname = data["from"][1] #accesss the employees dictionary and capture the second item
+bodycontent = data["body"][1] #capture the subject name from the json file
+
+from email.MIMEMultipart import MIMEMultipart #MIMEMultipart =  an internet standard that extends format of email to support text
+from email.MIMEText import MIMEText
+ 
+ 
+sendaddress = sendname #where it's coming from
+recipaddress = recipname  #where it is going to, take it from the JSON file
+msg = MIMEMultipart() 
+msg['From'] = sendaddress
+msg['To'] = recipaddress
+msg['Subject'] = "Test"
+ 
+body = bodycontent
+msg.attach(MIMEText(body, 'plain'))
+ 
+server = smtplib.SMTP('smtp.gmail.com', 587)
+server.starttls()
+server.login(sendaddress, "Turtles72894!!")
+text = msg.as_string()
+server.sendmail(sendaddress, recipaddress, text)
+server.quit()
